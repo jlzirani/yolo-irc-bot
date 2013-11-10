@@ -48,8 +48,10 @@ class defaultBot(irc.bot.SingleServerIRCBot):
 			cmd = cmd[1].split(' ',1)
 			if cmd[0] in self.dirMsg:
 				self.dirMsg[cmd[0]]( ev, cmd)
+			else:
+				self.sendMsg(ev.target, ev.source.nick+": I didn't recognized the command: " + cmd[0])
 
-		if cmd[0] in self.pubMsg:
+		elif cmd[0] in self.pubMsg:
 			self.pubMsg[cmd[0]]( ev, cmd)
 
 
