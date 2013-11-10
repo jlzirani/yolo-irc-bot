@@ -17,32 +17,32 @@
  Copyright 2013 Jean-Luc Z
 """
 
-from defaultBot import defaultBot
+from module import botMod
 from feedstail import feedGenerator
 from feedstail.config import Config
 import re
 
-class RssBot(defaultBot):
-	def __init__(self, servers, name, chans, rsslink):
-		self.init(servers, name, chans)	
+class RssMod(botMod):
+	def __init__(self, bot, rsslink):
+		super(RssMod, self).__init__(bot)
 		self.rss = [ (link, feedGenerator(Config(url=link, format=u'{title} - {link}', key='title', number=1, reverse=True, ignore_key_error=True))) for link in re.findall(r'(https?://\S+)', rsslink)]
-		self.connection.execute_delayed(1,self.getrss, [])
-		self.dirMsg["rss-list"] = self.rssList
-		self.dirMsg["rss-remove"] = self.rssRemove
-		self.dirMsg["rss-add"] = self.rssAdd
+		self.bot.dirMsg["rss-list"] = self.rssList
+		self.bot.dirMsg["rss-remove"] = self.rssRemove
+		self.bot.dirMsg["rss-add"] = self.rssAdd
+		self.bot.connection.execute_delayed(1,self.getrss, [])
 
 	def rssList(self, ev, cmd):
 		if len(cmd) == 1:
-			self.sendMsg(ev.target, ev.source.nick+": " + ', '.join([link[0]+"["+str(index)+"]" for (index, link) in enumerate(self.rss)]))
+			self.bot.sendMsg(ev.target, ev.source.nick+": " + ', '.join([link[0]+"["+str(index)+"]" for (index, link) in enumerate(self.rss)]))
 
 	def rssRemove(self, ev, cmd):
 		if len(cmd) > 1 :
 			obj = re.search(r'(?P<number>^[0-9]*$)|(?P<link>^https?://\S+$)', cmd[1])
 			if obj is not None and obj.group('number') is not None:
-				self.sendMsg(ev.target, "Removing: " + self.rss[int(obj.group('number'))][0])
+				self.bot.sendMsg(ev.target, "Removing: " + self.rss[int(obj.group('number'))][0])
 				self.rss.pop(int(obj.group('number')))
 			elif obj is not None and obj.group('link') is not None:
-				self.sendMsg(ev.target, "Removing: " + obj.group('link'))
+				self.bot.sendMsg(ev.target, "Removing: " + obj.group('link'))
 				self.rss = filter( lambda elem: not elem[0] == obj.group('link'), self.rss)
 
 	def rssAdd(self, ev, cmd):
@@ -54,9 +54,9 @@ class RssBot(defaultBot):
 	def showRss(self, gen):
 		for entry in gen[1].next():
 			entry = unicode(entry, "utf-8")
-			for chan in self.chans:
-				self.sendMsg(chan, entry)
+			for chan in self.bot.chans:
+				self.bot.sendMsg(chan, entry)
 
 	def getrss(self):
 		map(self.showRss, self.rss)
-		self.connection.execute_delayed(60*5,self.getrss, [])
+		self.bot.connection.execute_delayed(60*5,self.getrss, [])

@@ -18,20 +18,26 @@
 """
 
 import irc.bot
-import datetime
-import re
+from defaultMod import defaultMod
 
-class defaultBot(irc.bot.SingleServerIRCBot):
+class ircBot(irc.bot.SingleServerIRCBot):
+
 	def init(self, servers, name, chans):
                 self.name = name
+		self.servers = servers
                 self.chans = chans
-                self.privMsg = {"quit": self.disconnect, }
+                self.privMsg = {}
 		self.pubMsg = {}
-		self.dirMsg = {"quit": self.disconnect, "help": self.helpMsg}
+		self.dirMsg = {}
+		self.modules = []
                 irc.bot.SingleServerIRCBot.__init__(self, servers, name, "Je suis un bot!")
+		self.addModule(defaultMod)
 
 	def __init__(self, servers, name, chans):
 		self.init(servers, name, chans)
+
+	def addModule(self, module, args = []):
+		self.modules.append(module(self, *args))
 
 	def get_nickname(self):
 		return self.connection.get_nickname()
@@ -60,32 +66,7 @@ class defaultBot(irc.bot.SingleServerIRCBot):
 		if cmd[0] in self.privMsg:
 			self.privMsg[cmd[0]]( ev , cmd )
 
-
-	def helpMsg(self, ev, cmd):
-		self.sendMsg(ev.target, ev.source.nick + ": Hello Hacker! You are talking to "+self.get_nickname()+" and you have requested this help text.")
-		self.sendMsg(ev.target, "I have the following commands: "+ ', '.join(set(self.dirMsg.keys()+ self.pubMsg.keys() + self.privMsg.keys())))
-		self.sendMsg(ev.target, "Have a nice chat and get the bot with you !")
-
-
-	def disconnect(self, ev, cmd):
-		if len(cmd) > 1:
-			second = 0
-			delayedDie = re.search(r'^([0-5]?[0-9]h)?([0-5]?[0-9]m)?([0-5]?[0-9]s)?\s*(.*)', cmd[1]).groups()
-
-			if delayedDie[0] is not None:
-				second = datetime.datetime.strptime(delayedDie[0],'%Hh').hour * 3600
-			if delayedDie[1] is not None:
-				second += datetime.datetime.strptime(delayedDie[1],'%Mm').minute*60
-			if delayedDie[2] is not None:
-				second += datetime.datetime.strptime(delayedDie[2],'%Ss').second
-
-			param = [] 
-			if not delayedDie[3] == '':
-				param.append(delayedDie[3])
-
-			self.connection.execute_delayed(second,self.die,param)
-		else:
-			self.die()
-
 	def sendMsg(self, target, message):
 		self.connection.privmsg(target, message)
+
+

@@ -17,13 +17,15 @@
  Copyright 2013 Jean-Luc Z.
 """
 
-from ircbot.masterBot import MasterBot, botTypeList, HelloBot
-from ircbot.rssBot import RssBot
+from ircbot.masterMod import MasterMod, botTypeList
+from ircbot.rssMod import RssMod
+from ircbot.bot import ircBot
 
 if __name__ == '__main__':
 	global botTypeList
-	botTypeList['hello'] = HelloBot 
-	botTypeList['rss'] = RssBot
+	botTypeList['rss'] = RssMod
+	masterBot = ircBot([("127.0.0.1", 6667)], "botTest", ["#test"])
+	masterBot.addModule(MasterMod)
 
-	MasterBot([("127.0.0.1", 6667)], "botTest", ["#test"]).start() 
+	masterBot.start()
 
