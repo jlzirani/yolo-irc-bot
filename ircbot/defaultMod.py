@@ -24,9 +24,9 @@ from module import botMod
 
 class defaultMod(botMod):
 	def __init__(self, bot):
-		self.bot = bot 
-		self.bot.dirMsg["quit"] = self.disconnect
-		self.bot.dirMsg["help"] = self.helpMsg
+		super(defaultMod, self).__init__(bot)
+		self.dirMsg = { "quit": self.disconnect, "help": self.helpMsg}
+		self.installModule()
 
 	def disconnect(self, ev, cmd):
 		if len(cmd) > 1:

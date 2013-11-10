@@ -27,11 +27,11 @@ botTypeList = {}
 
 class MasterMod(botMod):
 	def __init__(self, bot):
+		super(MasterMod, self).__init__(bot)
 		self.bots = []
-		self.bot = bot
-		self.bot.dirMsg["quit"] = self.killMinion
-		self.bot.dirMsg["bot-list"] = self.botList
-		self.bot.dirMsg["add-bot"] = self.addBot
+		self.dirMsg= { "quit": self.killMinion, "bot-list": self.botList, "add-bot": self.addBot}
+		self.installModule()
+
 
 	def spawnBot(self, ev, args):
 		if not args["type"] in botTypeList:

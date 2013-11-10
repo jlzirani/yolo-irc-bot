@@ -26,9 +26,7 @@ class RssMod(botMod):
 	def __init__(self, bot, rsslink):
 		super(RssMod, self).__init__(bot)
 		self.rss = [ (link, feedGenerator(Config(url=link, format=u'{title} - {link}', key='title', number=1, reverse=True, ignore_key_error=True))) for link in re.findall(r'(https?://\S+)', rsslink)]
-		self.bot.dirMsg["rss-list"] = self.rssList
-		self.bot.dirMsg["rss-remove"] = self.rssRemove
-		self.bot.dirMsg["rss-add"] = self.rssAdd
+		self.dirMsg = {"rss-list": self.rssList, "rss-remove":  self.rssRemove, "rss-add": self.rssAdd}
 		self.bot.connection.execute_delayed(1,self.getrss, [])
 
 	def rssList(self, ev, cmd):
