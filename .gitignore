@@ -38,3 +38,6 @@ nosetests.xml
 # virtual-env
 ve/
 
+# vim swp files
+*.swp
+
