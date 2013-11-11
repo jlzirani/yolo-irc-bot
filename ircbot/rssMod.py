@@ -28,6 +28,7 @@ class RssMod(botMod):
 		self.rss = [ (link, feedGenerator(Config(url=link, format=u'{title} - {link}', key='title', number=1, reverse=True, ignore_key_error=True))) for link in re.findall(r'(https?://\S+)', rsslink)]
 		self.dirMsg = {"rss-list": self.rssList, "rss-remove":  self.rssRemove, "rss-add": self.rssAdd}
 		self.bot.connection.execute_delayed(1,self.getrss, [])
+		self.installModule()
 
 	def rssList(self, ev, cmd):
 		if len(cmd) == 1:
