@@ -25,7 +25,8 @@ from module import botMod
 class defaultMod(botMod):
 	def __init__(self, bot):
 		super(defaultMod, self).__init__(bot)
-		self.dirMsg = { "quit": self.disconnect, "help": self.helpMsg, "join": self.join}
+		self.dirMsg = { "quit": self.disconnect, "help": self.helpMsg, "join": self.join, "part": self.pubClose}
+		self.privMsg = { "part": self.privClose}
 		self.installModule()
 
 	def disconnect(self, ev, cmd):
@@ -56,7 +57,13 @@ class defaultMod(botMod):
 		if len(cmd) > 1:
 			map(self.bot.connection.join, re.findall(r'#[a-zA-Z0-9_]{2,9}', cmd[1]))
 
+	def pubClose(self, ev, cmd):
+		if len(cmd) == 1:
+			self.bot.connection.part(ev.target)
+		else:
+			map(self.bot.connection.part, re.findall(r'#[a-zA-Z0-9_]{2,9}', cmd[1]))
 
-
-
+	def privClose(self, ev, cmd):
+		if len(cmd) >=1:
+			map(self.bot.connection.part, re.findall(r'#[a-zA-Z0-9_]{2,9}', cmd[1]))
 
