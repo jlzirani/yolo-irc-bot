@@ -25,7 +25,7 @@ from module import botMod
 class defaultMod(botMod):
 	def __init__(self, bot):
 		super(defaultMod, self).__init__(bot)
-		self.dirMsg = { "quit": self.disconnect, "help": self.helpMsg}
+		self.dirMsg = { "quit": self.disconnect, "help": self.helpMsg, "join": self.join}
 		self.installModule()
 
 	def disconnect(self, ev, cmd):
@@ -52,3 +52,6 @@ class defaultMod(botMod):
 		self.bot.sendMsg(ev.target, "I have the following commands: "+ ', '.join(set(self.bot.dirMsg.keys()+ self.bot.pubMsg.keys() + self.bot.privMsg.keys())))
 		self.bot.sendMsg(ev.target, "Have a nice chat and get the bot with you !")
 
+
+	def join(self, ev, cmd):
+		map(self.bot.connection.join, re.findall(r'#[a-zA-Z0-9_]{2,9}', cmd[1]))
