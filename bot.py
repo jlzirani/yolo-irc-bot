@@ -20,11 +20,18 @@
 from ircbot.masterMod import MasterMod, botTypeList
 from ircbot.rssMod import RssMod
 from ircbot.bot import ircBot
+import ConfigParser
 
 if __name__ == '__main__':
 	global botTypeList
 	botTypeList['rss'] = RssMod
-	masterBot = ircBot([("127.0.0.1", 6667)], "botTest", ["#test"])
+
+	Config = ConfigParser.ConfigParser()
+	Config.read("config.ini")
+
+	server = (Config.get('general', 'server'), int(Config.get('general', 'port')))
+
+	masterBot = ircBot([server], Config.get('general', 'masterBot'), Config.get('general', 'chan'))
 	masterBot.addModule(MasterMod)
 
 	masterBot.start()
