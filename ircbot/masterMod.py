@@ -37,10 +37,10 @@ class MasterMod(botMod):
 		if not args["type"] in botTypeList:
 			self.bot.sendMsg(ev.target, ev.source.nick + ": bot type not recognized !")
 		else:
-			chans = re.findall(r'#[a-zA-Z0-9_]{2,9}', args["chans"]) 
+			chans = args["chans"][1:]
 			if len(chans) == 0:
-				chans = [ ev.target ]
-			bot = ircBot( self.bot.servers, args["name"], chans)
+				chans = ev.target
+			bot = ircBot( self.bot.servers, args["name"], chans )
 			bot.addModule(botTypeList[args["type"]], [args["args"]])
 			self.bots.append(bot)
 			Thread(target=bot.start).start()
