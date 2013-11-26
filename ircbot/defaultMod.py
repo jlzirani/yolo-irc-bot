@@ -54,8 +54,10 @@ class defaultMod(botMod):
 		self.bot.sendMsg(ev.target, "Have a nice chat and get the bot with you !")
 
 	def join(self, ev, cmd):
+		chans = re.findall(r'#[a-zA-Z0-9_]{2,9}', cmd[1])
+		self.bot.chans += chans
 		if len(cmd) > 1:
-			map(self.bot.connection.join, re.findall(r'#[a-zA-Z0-9_]{2,9}', cmd[1]))
+			map(self.bot.connection.join, chans)
 
 	def pubClose(self, ev, cmd):
 		if len(cmd) == 1:

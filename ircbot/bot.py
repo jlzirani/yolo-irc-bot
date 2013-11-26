@@ -25,7 +25,8 @@ class ircBot(irc.bot.SingleServerIRCBot):
 	def init(self, servers, name, chans):
                 self.name = name
 		self.servers = servers
-                self.chans = chans
+                self.chansStr = chans
+		self.chans = []
                 self.privMsg = {}
 		self.pubMsg = {}
 		self.dirMsg = {}
@@ -43,7 +44,7 @@ class ircBot(irc.bot.SingleServerIRCBot):
 		return self.connection.get_nickname()
 
 	def on_welcome(self, serv, ev):
-		self.dirMsg["join"]( ev, [None, self.chans])
+		self.dirMsg["join"]( ev, [None, self.chansStr])
 
 	def on_pubmsg(self, serv, ev):
 		msg = ev.arguments[0]
